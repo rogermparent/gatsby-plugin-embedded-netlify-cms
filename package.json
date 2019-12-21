@@ -1,0 +1,27 @@
+{
+  "name": "gatsby-plugin-embedded-netlify-cms",
+  "version": "0.0.1",
+  "description": "A Gatsby plugin to add Netlify CMS to a website within the Gatsby webpack config.",
+  "license": "MIT",
+  "author": "rmp <rogermparent@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rogermparent/gatsby-plugin-embedded-netlify-cms"
+  },
+  "keywords": [
+    "react",
+    "gatsby",
+    "gatsby-plugin",
+    "netlify",
+    "cms",
+    "netlify-cms",
+    "local development"
+  ],
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "copy-webpack-plugin": "^5.1.1",
+    "netlify-cms-app": "^2.10.1",
+    "netlify-cms-backend-fs": "^0.4.4"
+  }
+}
