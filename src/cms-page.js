@@ -1,9 +1,9 @@
-import React, {useEffect} from "react"
-import ReactDOM from "react-dom"
-import Helmet from "react-helmet"
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom";
+import Helmet from "react-helmet";
 
-import createConfig from './create-config'
-import configureCMS from './configure-cms'
+import createConfig from "./create-config";
+import configureCMS from "./configure-cms";
 
 const waitForGlobal = function(key, callback) {
   if (window[key]) {
@@ -15,20 +15,20 @@ const waitForGlobal = function(key, callback) {
   }
 };
 
-export default ({data, pageContext}) => {
-  useEffect(()=>{
-    if(typeof(window) !== undefined) {
-      window.React = React
-      window.ReactDOM = ReactDOM
-      const config = createConfig({data, pageContext})
+export default ({ data, pageContext }) => {
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      window.React = React;
+      window.ReactDOM = ReactDOM;
+      const config = createConfig({ data, pageContext });
 
-      waitForGlobal('NetlifyCmsApp', () => {
-        const CMS = window.NetlifyCmsApp
-        configureCMS({CMS, data, pageContext, config})
+      waitForGlobal("NetlifyCmsApp", () => {
+        const CMS = window.NetlifyCmsApp;
+        configureCMS({ CMS, data, pageContext, config });
         CMS.init({ config });
-      })
+      });
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <>
       <Helmet>
@@ -37,5 +37,5 @@ export default ({data, pageContext}) => {
       </Helmet>
       <div id="nc-root" />
     </>
-  )
-}
+  );
+};

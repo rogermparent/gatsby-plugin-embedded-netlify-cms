@@ -1,4 +1,4 @@
-import createConfig from './create-config';
+import createConfig from "./create-config";
 
 const config = createConfig();
 

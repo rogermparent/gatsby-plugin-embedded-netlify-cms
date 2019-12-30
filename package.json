@@ -13,8 +13,8 @@
     "gatsby",
     "gatsby-plugin",
     "netlify",
-    "cms",
     "netlify-cms",
+    "cms",
     "local development"
   ],
   "main": "index.js",

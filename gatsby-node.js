@@ -1,32 +1,29 @@
-const path = require("path")
-const CopyPlugin = require("copy-webpack-plugin")
+const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 
 exports.onCreateDevServer = ({ app }) => {
-  const fsMiddlewareAPI = require('netlify-cms-backend-fs/dist/fs');
+  const fsMiddlewareAPI = require("netlify-cms-backend-fs/dist/fs");
   fsMiddlewareAPI(app);
 };
 
-const withDefaults = (options) => {
-  return({
+const withDefaults = options => {
+  return {
     enableIdentityWidget: true,
     publicPath: `admin`,
     htmlTitle: `Content Manager`,
     htmlFavicon: ``,
     ...options
-  })
-}
+  };
+};
 
 exports.onCreateWebpackConfig = (
   { store, stage, getConfig, plugins, pathPrefix, loaders, rules, actions },
   pluginOptions
 ) => {
+  const { enableIdentityWidget } = withDefaults(pluginOptions);
 
-  const {
-    enableIdentityWidget,
-  } = withDefaults(pluginOptions)
-
-  const gatsbyConfig = getConfig()
-  const { program } = store.getState()
+  const gatsbyConfig = getConfig();
+  const { program } = store.getState();
 
   const externals = [
     {
@@ -34,9 +31,9 @@ exports.onCreateWebpackConfig = (
       global: `NetlifyCmsApp`,
       assetDir: `dist`,
       assetName: `netlify-cms-app.js`,
-      sourceMap: `netlify-cms-app.js.map`,
-    },
-  ]
+      sourceMap: `netlify-cms-app.js.map`
+    }
+  ];
 
   if (enableIdentityWidget) {
     externals.unshift({
@@ -44,8 +41,8 @@ exports.onCreateWebpackConfig = (
       global: `netlifyIdentity`,
       assetDir: `build`,
       assetName: `netlify-identity-widget.js`,
-      sourceMap: `netlify-identity-widget.js.map`,
-    })
+      sourceMap: `netlify-identity-widget.js.map`
+    });
   }
 
   const webpackPlugins = [
@@ -56,55 +53,51 @@ exports.onCreateWebpackConfig = (
           [
             {
               from: require.resolve(path.join(name, assetDir, assetName)),
-              to: assetName,
+              to: assetName
             },
             sourceMap && {
               from: require.resolve(path.join(name, assetDir, sourceMap)),
-              to: sourceMap,
-            },
+              to: sourceMap
+            }
           ].filter(item => item)
         )
       )
-    ),
-  ]
+    )
+  ];
 
   actions.setWebpackConfig({
     plugins: webpackPlugins,
     externals: externals.map(({ name, global }) => {
       return {
-        [name]: global,
-      }
+        [name]: global
+      };
     }),
     optimization:
       stage === `develop`
-      ? {}
-      : {
-        splitChunks: {
-          cacheGroups: {
-            "netlify-identity-widget": {
-              test: /[\\/]node_modules[\\/](netlify-identity-widget)[\\/]/,
-              name: `netlify-identity-widget`,
-              chunks: `all`,
-              enforce: true,
-            },
-          },
-        },
-      },
-  })
-}
+        ? {}
+        : {
+            splitChunks: {
+              cacheGroups: {
+                "netlify-identity-widget": {
+                  test: /[\\/]node_modules[\\/](netlify-identity-widget)[\\/]/,
+                  name: `netlify-identity-widget`,
+                  chunks: `all`,
+                  enforce: true
+                }
+              }
+            }
+          }
+  });
+};
 
-exports.createPages = ({actions: {createPage}}, pluginOptions) => {
-  const {
-    publicPath,
-    htmlTitle,
-    htmlFavicon
-  } = withDefaults(pluginOptions)
+exports.createPages = ({ actions: { createPage } }, pluginOptions) => {
+  const { publicPath, htmlTitle, htmlFavicon } = withDefaults(pluginOptions);
   createPage({
     path: publicPath,
-    component: require.resolve('./src/cms-page'),
+    component: require.resolve("./src/cms-page"),
     context: {
       htmlTitle,
       htmlFavicon
     }
-  })
-}
+  });
+};
