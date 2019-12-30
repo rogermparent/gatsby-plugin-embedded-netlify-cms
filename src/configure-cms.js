@@ -1,8 +1,7 @@
-import FileSystemBackend from "netlify-cms-backend-fs"
-
 export default ({CMS, config}) => {
   // If running in development
   if (process.env.NODE_ENV === 'development') {
+    const FileSystemBackend = require('netlify-cms-backend-fs')
     // Register the FileSystemBackend.
     config.backend = {
       name: 'file-system',

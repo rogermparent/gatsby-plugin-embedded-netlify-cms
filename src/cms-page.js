@@ -29,7 +29,6 @@ export default ({data, pageContext}) => {
       })
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  console.log(pageContext)
   return (
     <>
       <Helmet>
