@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-embedded-netlify-cms",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Gatsby plugin to add Netlify CMS to a website within the Gatsby webpack config.",
   "license": "MIT",
   "author": "rmp <rogermparent@gmail.com>",
