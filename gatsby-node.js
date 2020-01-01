@@ -6,12 +6,22 @@ exports.onCreateDevServer = ({ app }) => {
   fsMiddlewareAPI(app);
 };
 
+const getFaviconType = htmlFavicon => {
+  const ext = path.extname(htmlFavicon);
+  return ext === ".ico" ? "image/x-icon" : "image/ico";
+};
+
 const withDefaults = options => {
+  const faviconType =
+    options.faviconType ||
+    (options.htmlFavicon && getFaviconType(options.htmlFavicon));
+
   return {
-    enableIdentityWidget: true,
+    enableIdentityWidget: false,
     publicPath: `admin`,
     htmlTitle: `Content Manager`,
-    htmlFavicon: ``,
+    htmlFavicon: null,
+    faviconType,
     ...options
   };
 };
@@ -20,8 +30,6 @@ exports.onCreateWebpackConfig = (
   { store, stage, getConfig, plugins, pathPrefix, loaders, rules, actions },
   pluginOptions
 ) => {
-  const { enableIdentityWidget } = withDefaults(pluginOptions);
-
   const gatsbyConfig = getConfig();
   const { program } = store.getState();
 
@@ -34,16 +42,6 @@ exports.onCreateWebpackConfig = (
       sourceMap: `netlify-cms-app.js.map`
     }
   ];
-
-  if (enableIdentityWidget) {
-    externals.unshift({
-      name: `netlify-identity-widget`,
-      global: `netlifyIdentity`,
-      assetDir: `build`,
-      assetName: `netlify-identity-widget.js`,
-      sourceMap: `netlify-identity-widget.js.map`
-    });
-  }
 
   const webpackPlugins = [
     new CopyPlugin(
@@ -71,33 +69,35 @@ exports.onCreateWebpackConfig = (
       return {
         [name]: global
       };
-    }),
-    optimization:
-      stage === `develop`
-        ? {}
-        : {
-            splitChunks: {
-              cacheGroups: {
-                "netlify-identity-widget": {
-                  test: /[\\/]node_modules[\\/](netlify-identity-widget)[\\/]/,
-                  name: `netlify-identity-widget`,
-                  chunks: `all`,
-                  enforce: true
-                }
-              }
-            }
-          }
+    })
   });
 };
 
-exports.createPages = ({ actions: { createPage } }, pluginOptions) => {
-  const { publicPath, htmlTitle, htmlFavicon } = withDefaults(pluginOptions);
-  createPage({
-    path: publicPath,
-    component: require.resolve("./src/cms-page"),
-    context: {
+exports.createPages = async (gatsby, pluginOptions) => {
+  const {
+    actions: { createPage },
+    graphql
+  } = gatsby;
+  const options = withDefaults(pluginOptions);
+  if (options.publicPath) {
+    const publicPath = path.join('/',options.publicPath,'/')
+    const {
       htmlTitle,
-      htmlFavicon
-    }
-  });
+      htmlFavicon,
+      faviconType,
+      getContextData
+    } = options;
+    const buildConfig = options.buildConfig || require("./src/build-config");
+    const config = buildConfig(gatsby, options);
+
+    createPage({
+      path: publicPath,
+      component: require.resolve("./src/cms-page"),
+      context: {
+        htmlTitle,
+        htmlFavicon,
+        config: await config
+      }
+    });
+  }
 };

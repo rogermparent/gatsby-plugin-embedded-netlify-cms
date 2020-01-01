@@ -1,4 +1,4 @@
-export default function(config = {}) {
+function defaultBuildConfig() {
   return {
     backend: {
       name: "git-gateway",
@@ -7,7 +7,8 @@ export default function(config = {}) {
     load_config_file: false,
     media_folder: "static/images/uploads",
     public_folder: "/images/uploads",
-    collections: [],
-    ...config
+    collections: []
   };
 }
+
+module.exports = defaultBuildConfig;
